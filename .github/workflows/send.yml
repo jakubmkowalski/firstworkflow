@@ -2,6 +2,9 @@ name: Trigger Regression Tests
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [notify-first-workflow]
+
 jobs:
   setup:
     runs-on: ubuntu-latest

@@ -23,7 +23,8 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/workflows/workflow_file.yml/dispatches \
-            -d '{"ref":"main"}'
+            -d '{"event_type":"start_regression_tests","client_payload":{"run_id":"${{ github.run_id }}","triggered_by":"${{ github.actor }}","commit_sha":"${{ github.sha }}"}}'
+          echo "Second workflow triggered successfully."
       
       - name: Wait for Artifact
         id: wait_for_artifact

@@ -5,6 +5,10 @@ on:
   repository_dispatch:
     types: [notify-first-workflow]
 
+env:
+  ACTIONS_RUNNER_DEBUG: true
+  ACTIONS_STEP_DEBUG: true
+
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -28,7 +32,9 @@ jobs:
     needs: setup
     steps:
       - name: Wait for feedback
-        run: echo "Waiting for feedback from the second workflow..."
+        run: |
+          echo "Waiting for feedback from the second workflow..."
+          sleep 20  # This will keep the workflow running for 10 minutes, simulating a wait
 
       - name: Debug payload
         run: |

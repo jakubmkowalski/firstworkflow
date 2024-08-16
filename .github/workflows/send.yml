@@ -30,6 +30,10 @@ jobs:
       - name: Wait for feedback
         run: echo "Waiting for feedback from the second workflow..."
 
+      - name: Debug payload
+        run: |
+          echo "Full payload: ${{ toJson(github.event.client_payload) }}"
+
       - name: Process feedback
         run: |
           echo "Feedback received: ${{ github.event.client_payload.status }}"

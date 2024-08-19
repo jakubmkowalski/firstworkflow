@@ -40,25 +40,55 @@ jobs:
           run_id=""
           artifact_url=""
           for i in {1..30}; do
-            response=$(curl -H "Accept: application/vnd.github.v3+json" \
-                           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                           https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs)
-            run_id=$(echo $response | jq -r ".workflow_runs[] | select(.head_branch == \"$branch_name\") | .id" | head -n 1)
-            artifact_url=$(curl -H "Accept: application/vnd.github.v3+json" \
-                               -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                               https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs/$run_id/artifacts | \
-                               jq -r ".artifacts[] | select(.name == \"$artifact_name\") | .archive_download_url")
+            echo "Attempt $i: Fetching workflow runs for branch '$branch_name'..."
+            response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+                              -H "Authorization: token $GH_TOKEN" \
+                              https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs)
+
+            echo "Response received:"
+            echo "$response"  # Print the full response for debugging
+
+            if [ -z "$response" ]; then
+              echo "Error: No response received from GitHub API."
+              exit 1
+            fi
+
+            run_id=$(echo "$response" | jq -r ".workflow_runs[] | select(.head_branch == \"$branch_name\") | .id" | head -n 1)
+
+            if [ -z "$run_id" ]; then
+              echo "No workflow runs found for branch '$branch_name'."
+              sleep 30
+              continue
+            fi
+
+            echo "Found run ID: $run_id. Fetching artifacts..."
+            artifact_response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+                                    -H "Authorization: token $GH_TOKEN" \
+                                    https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs/$run_id/artifacts)
+
+            echo "Artifact response received:"
+            echo "$artifact_response"  # Print the artifact response for debugging
+
+            if [ -z "$artifact_response" ]; then
+              echo "Error: No response received when fetching artifacts."
+              exit 1
+            fi
+
+            artifact_url=$(echo "$artifact_response" | jq -r ".artifacts[] | select(.name == \"$artifact_name\") | .archive_download_url")
+
             if [ -n "$artifact_url" ]; then
               echo "Artifact found: $artifact_url"
               break
             fi
+
             echo "Artifact not found, waiting..."
             sleep 30
           done
-          
+
           if [ -z "$artifact_url" ]; then
             echo "Artifact not found after waiting."
             exit 1
           fi
-          
+
           echo "::set-output name=artifact_url::$artifact_url"
+          

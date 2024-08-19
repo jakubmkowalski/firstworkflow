@@ -42,7 +42,7 @@ jobs:
           for i in {1..30}; do
             echo "Attempt $i: Fetching workflow runs for branch '$branch_name'..."
             response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
-                              -H "Authorization: token $GH_TOKEN" \
+                              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"  \
                               https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs)
 
             echo "Response received:"
@@ -63,7 +63,7 @@ jobs:
 
             echo "Found run ID: $run_id. Fetching artifacts..."
             artifact_response=$(curl -s -H "Accept: application/vnd.github.v3+json" \
-                                    -H "Authorization: token $GH_TOKEN" \
+                                    -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"  \
                                     https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs/$run_id/artifacts)
 
             echo "Artifact response received:"
@@ -91,4 +91,3 @@ jobs:
           fi
 
           echo "::set-output name=artifact_url::$artifact_url"
-          

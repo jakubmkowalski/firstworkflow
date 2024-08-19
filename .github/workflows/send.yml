@@ -24,7 +24,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          branch_name="${{ github.event.inputs.branch_name }}"
+          branch_name="second"
           echo "Triggering the second workflow on branch $branch_name..."
           curl -X POST -H "Authorization: token $GH_TOKEN" \
                -H "Accept: application/vnd.github.everest-preview+json" \
@@ -35,7 +35,7 @@ jobs:
       - name: Wait for Artifact
         id: wait_for_artifact
         run: |
-          branch_name="${{ github.event.inputs.branch_name }}"
+          branch_name="second"
           artifact_name="desired_artifact_name"
           run_id=""
           artifact_url=""

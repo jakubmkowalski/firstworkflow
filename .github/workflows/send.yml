@@ -2,7 +2,11 @@ name: Trigger and Wait for Artifact
 
 on:
   workflow_dispatch:
-
+    inputs:
+      branch_name:
+        description: 'Branch name to run tests from'
+        required: true
+        default: 'main'
 
 jobs:
   prepare-and-trigger:
@@ -20,16 +24,18 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          echo "Triggering the second workflow..."
+          branch_name="${{ github.event.inputs.branch_name }}"
+          echo "Triggering the second workflow on branch $branch_name..."
           curl -X POST -H "Authorization: token $GH_TOKEN" \
                -H "Accept: application/vnd.github.everest-preview+json" \
                https://api.github.com/repos/jakubmkowalski/secondworkflow/dispatches \
-               -d '{"event_type":"start_regression_tests","client_payload":{"run_id":"${{ github.run_id }}"}}'
+               -d "{\"event_type\":\"start_regression_tests\",\"client_payload\":{\"run_id\":\"${{ github.run_id }}\",\"branch\":\"$branch_name\"}}"
           echo "Second workflow triggered successfully."
       
       - name: Wait for Artifact
         id: wait_for_artifact
         run: |
+          branch_name="${{ github.event.inputs.branch_name }}"
           artifact_name="desired_artifact_name"
           run_id=""
           artifact_url=""
@@ -37,7 +43,7 @@ jobs:
             response=$(curl -H "Accept: application/vnd.github.v3+json" \
                            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                            https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs)
-            run_id=$(echo $response | jq -r '.workflow_runs[] | select(.head_branch == "main") | .id' | head -n 1)
+            run_id=$(echo $response | jq -r ".workflow_runs[] | select(.head_branch == \"$branch_name\") | .id" | head -n 1)
             artifact_url=$(curl -H "Accept: application/vnd.github.v3+json" \
                                -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                                https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs/$run_id/artifacts | \

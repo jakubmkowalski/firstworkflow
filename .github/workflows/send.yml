@@ -74,7 +74,7 @@ jobs:
                       https://api.github.com/repos/4chain-ag/spv-wallet-regression/actions/artifacts)
           
             # Check if an artifact containing the RUN_ID exists
-            artifact_name=$(echo "$artifact_data" | jq -r ".artifacts[] | select(.name | contains(\"${{ env.RUN_ID }}\")) | .name")
+            artifact_name=$(echo "$artifact_data" | jq -r ".artifacts[] | select(.name | contains(\"success-main")) | .name")
             
             if [[ -n "$artifact_name" ]]; then
               echo "Artifact found: $artifact_name"
@@ -103,8 +103,3 @@ jobs:
           echo "Status: $status"
           echo "Run ID: $run_id"
           echo "Triggering Run ID: $triggering_run_id"
-
-          # Optionally, set these values as environment variables
-          echo "STATUS=$status" >> $GITHUB_ENV
-          echo "RUN_ID=$run_id" >> $GITHUB_ENV
-          echo "TRIGGERING_RUN_ID=$triggering_run_id" >> $GITHUB_ENV

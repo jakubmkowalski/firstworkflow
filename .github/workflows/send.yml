@@ -62,9 +62,9 @@ jobs:
           fi
           
           echo "::set-output name=artifact_url::$artifact_url"
-          
+
       - name: Wait for 3 minutes before checking for results
-        run: sleep 180
+        run: sleep 20
 
       - name: Check for workflow completion status every 10 seconds for up to 1 minute
         run: |

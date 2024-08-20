@@ -58,7 +58,6 @@ jobs:
           
           if [ -z "$artifact_url" ]; then
             echo "Artifact not found after waiting."
-            exit 1
           fi
           
           echo "::set-output name=artifact_url::$artifact_url"

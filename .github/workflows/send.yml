@@ -39,7 +39,7 @@ jobs:
           artifact_name="desired_artifact_name"
           run_id=""
           artifact_url=""
-          for i in {1..30}; do
+          for i in {1..3}; do
             response=$(curl -H "Accept: application/vnd.github.v3+json" \
                            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                            https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/runs)

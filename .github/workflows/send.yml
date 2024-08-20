@@ -74,7 +74,7 @@ jobs:
                       https://api.github.com/repos/4chain-ag/spv-wallet-regression/actions/artifacts)
 
             # Check if an artifact containing the RUN_ID exists
-            artifact_name=$(echo "$artifact_data" | jq -r '.artifacts[] | select(.name | contains("success-main")) | .name')
+            artifact_name=$(echo "$artifact_data" | jq -r '.artifacts[] | select(.name | contains("success_main")) | .name')
             
             if [[ -n "$artifact_name" ]]; then
               echo "Artifact found: $artifact_name"

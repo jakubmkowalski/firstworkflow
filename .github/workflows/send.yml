@@ -94,8 +94,7 @@ jobs:
             exit 1
           fi
 
-      - name: Parse artifact name into components
-        run: |
+
           # Parse the artifact name into components
           status=$(echo "$artifact_name" | cut -d'_' -f1)
           run_id=$(echo "$artifact_name" | cut -d'_' -f2)

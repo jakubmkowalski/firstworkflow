@@ -102,3 +102,4 @@ jobs:
           echo "Status: $status"
           echo "Run ID: $run_id"
           echo "Triggering Run ID: $triggering_run_id"
+          echo "$triggering_run_id check this out" >> $GITHUB_STEP_SUMMARY

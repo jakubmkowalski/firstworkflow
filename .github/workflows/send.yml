@@ -62,3 +62,51 @@ jobs:
           fi
           
           echo "::set-output name=artifact_url::$artifact_url"
+          
+      - name: Wait for 3 minutes before checking for results
+        run: sleep 180
+
+      - name: Check for workflow completion status every 10 seconds for up to 1 minute
+        run: |
+          success=false
+          for i in {1..6}; do
+            # Fetch the list of artifacts from the target repository
+            artifact_data=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+                      https://api.github.com/repos/4chain-ag/spv-wallet-regression/actions/artifacts)
+          
+            # Check if an artifact containing the RUN_ID exists
+            artifact_name=$(echo "$artifact_data" | jq -r ".artifacts[] | select(.name | contains(\"${{ env.RUN_ID }}\")) | .name")
+            
+            if [[ -n "$artifact_name" ]]; then
+              echo "Artifact found: $artifact_name"
+              success=true
+              break
+            fi
+
+            echo "Waiting for workflow completion..."
+            sleep 10
+          done
+
+          if [[ "$success" == "true" ]]; then
+            echo "The regression tests completed successfully."
+          else
+            echo "We couldn't determine the workflow's final status. No artifact found."
+            exit 1
+          fi
+
+      - name: Parse artifact name into components
+        run: |
+          # Parse the artifact name into components
+          status=$(echo "$artifact_name" | cut -d'_' -f1)
+          run_id=$(echo "$artifact_name" | cut -d'_' -f2)
+          triggering_run_id=$(echo "$artifact_name" | cut -d'_' -f3)
+
+          # Output the parsed values
+          echo "Status: $status"
+          echo "Run ID: $run_id"
+          echo "Triggering Run ID: $triggering_run_id"
+
+          # Optionally, set these values as environment variables
+          echo "STATUS=$status" >> $GITHUB_ENV
+          echo "RUN_ID=$run_id" >> $GITHUB_ENV
+          echo "TRIGGERING_RUN_ID=$triggering_run_id" >> $GITHUB_ENV

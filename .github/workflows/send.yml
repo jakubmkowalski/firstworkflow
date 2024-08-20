@@ -71,7 +71,7 @@ jobs:
           for i in {1..6}; do
             # Fetch the list of artifacts from the target repository
             artifact_data=$(curl -s -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-                      https://api.github.com/repos/jakubmkowalski/secondworklow/actions/artifacts)
+                      https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/artifacts)
 
             # Check if an artifact containing the RUN_ID exists
             artifact_name=$(echo "$artifact_data" | jq -r '.artifacts[] | select(.name | contains("success_main")) | .name')

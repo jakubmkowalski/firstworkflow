@@ -77,8 +77,8 @@ jobs:
                       https://api.github.com/repos/jakubmkowalski/secondworkflow/actions/artifacts)
 
             # Check if an artifact containing the RUN_ID exists
-            artifact_name=$(echo "$artifact_data" | jq -r ".artifacts[] | select(.name | contains(\"${{ env.RUN_ID }}\")) | .name')
-            
+            #artifact_name=$(echo "$artifact_data" | jq -r ".artifacts[] | select(.name | contains(\"${{ env.RUN_ID }}\")) | .name')
+            artifact_name=$(echo "$artifact_data" | grep -q "${{ env.RUN_ID }}")
             if [[ -n "$artifact_name" ]]; then
               echo "Artifact found: $artifact_name"
               success=true

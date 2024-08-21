@@ -32,7 +32,7 @@ jobs:
           curl -X POST -H "Authorization: token $GH_TOKEN" \
                -H "Accept: application/vnd.github.everest-preview+json" \
                https://api.github.com/repos/jakubmkowalski/secondworkflow/dispatches \
-               -d "{\"event_type\":\"start_regression_tests\",\"client_payload\":{\"run_id\":\"${{ github.run_id }}\",\"branch\":\"$branch_name\"}}"
+               -d "{\"event_type\":\"start_regression_tests\",\"client_payload\":{\"run_id\":\"$RUN_ID\",\"branch\":\"$branch_name\"}}"
           echo "Second workflow triggered successfully."
       
       # - name: Wait for Artifact

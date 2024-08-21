@@ -97,6 +97,7 @@ jobs:
           fi
 
           # Parse the artifact name into components
+          echo "Artifact name: $artifact_name" >> $GITHUB_STEP_SUMMARY
           status=$(echo "$artifact_name" | cut -d'_' -f1)
           run_id=$(echo "$artifact_name" | cut -d'_' -f2)
           triggering_run_id=$(echo "$artifact_name" | cut -d'_' -f3)

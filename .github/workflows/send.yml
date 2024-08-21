@@ -105,4 +105,9 @@ jobs:
           echo "Status: $status"
           echo "Run ID: $run_id"
           echo "Triggering Run ID: $triggering_run_id"
+          if [ -z "$triggering_run_id" ]; then
+            echo "No triggering run ID found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$triggering_run_id check this out" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "$triggering_run_id check this out" >> $GITHUB_STEP_SUMMARY

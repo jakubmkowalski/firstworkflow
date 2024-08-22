@@ -7,12 +7,17 @@ on:
         description: 'Branch name to run tests from'
         required: true
         default: 'main'
+  pull_request_target:
+    types: [labeled]
 
 env:
   RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}
 
 jobs:
-  prepare-and-trigger:
+  run:
+    if: >
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'pull_request_target' && github.event.label.name == 'regression-tests')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

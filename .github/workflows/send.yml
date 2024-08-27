@@ -2,11 +2,11 @@ name: Trigger and Wait for Artifact
 
 on:
   workflow_dispatch:
-    inputs:
-      branch_name:
-        description: 'Branch name to run tests from'
-        required: true
-        default: 'main'
+    # inputs:
+    #   branch_name:
+    #     description: 'Branch name to run tests from'
+    #     required: true
+    #     default: 'main'
   pull_request_target:
     types: [labeled]
 
@@ -27,12 +27,13 @@ jobs:
         run: |
           # Add commands to prepare your environment here
           echo "Environment prepared"
+          echo "RUN_ID: $RUN_ID"
 
       - name: Trigger Second Workflow
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
-          branch_name="${{ github.event.inputs.branch_name }}"
+          branch_name="${{ github.ref_name }}"
           echo "Triggering the second workflow on branch $branch_name..."
           curl -X POST -H "Authorization: token $GH_TOKEN" \
                -H "Accept: application/vnd.github.everest-preview+json" \
